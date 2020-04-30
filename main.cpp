@@ -3,57 +3,57 @@
 #include <heapapi.h>
 #include "controlBlock.h"
 
-#define MEM_SIZE 80													//Объем пула памяти
+#define MEM_SIZE 80													//РћР±СЉРµРј РїСѓР»Р° РїР°РјСЏС‚Рё
 
-void* memory;														//Пул памяти
+void* memory;														//РџСѓР» РїР°РјСЏС‚Рё
 
-void* Malloc(size_t);												//Выделение памяти
-void* Realloc(void*, size_t);										//Изменение размеры выделенной памяти
-void Free(void*);													//Освобождение выделенной памяти
-void visualize();													//Визуализация памяти
+void* Malloc(size_t);												//Р’С‹РґРµР»РµРЅРёРµ РїР°РјСЏС‚Рё
+void* Realloc(void*, size_t);										//РР·РјРµРЅРµРЅРёРµ СЂР°Р·РјРµСЂС‹ РІС‹РґРµР»РµРЅРЅРѕР№ РїР°РјСЏС‚Рё
+void Free(void*);													//РћСЃРІРѕР±РѕР¶РґРµРЅРёРµ РІС‹РґРµР»РµРЅРЅРѕР№ РїР°РјСЏС‚Рё
+void visualize();													//Р’РёР·СѓР°Р»РёР·Р°С†РёСЏ РїР°РјСЏС‚Рё
 
 int main(){
 
-	memory = malloc(MEM_SIZE);										//Выделение памяти
-	controlBlock start(MEM_SIZE - sizeof(controlBlock));			//Первый controlBlock
+	memory = malloc(MEM_SIZE);										//Р’С‹РґРµР»РµРЅРёРµ РїР°РјСЏС‚Рё
+	controlBlock start(MEM_SIZE - sizeof(controlBlock));			//РџРµСЂРІС‹Р№ controlBlock
 	*((controlBlock*)memory) = start;
 
-	//Вывод визуализации
+	//Р’С‹РІРѕРґ РІРёР·СѓР°Р»РёР·Р°С†РёРё
 	visualize();
 	std::cout << std::endl;
 
-	//Выделение некорректного объема
+	//Р’С‹РґРµР»РµРЅРёРµ РЅРµРєРѕСЂСЂРµРєС‚РЅРѕРіРѕ РѕР±СЉРµРјР°
 	void* ptr = Malloc(80);
 
-	//Вывод визуализации
+	//Р’С‹РІРѕРґ РІРёР·СѓР°Р»РёР·Р°С†РёРё
 	visualize();
 	std::cout << std::endl;
 
-	//Освобождение по nullptr
+	//РћСЃРІРѕР±РѕР¶РґРµРЅРёРµ РїРѕ nullptr
 	Free(ptr);
 
-	//Вывод визуализации
+	//Р’С‹РІРѕРґ РІРёР·СѓР°Р»РёР·Р°С†РёРё
 	visualize();
 	std::cout << std::endl;
 
-	//Выделение памяти
+	//Р’С‹РґРµР»РµРЅРёРµ РїР°РјСЏС‚Рё
 	void* ptr2 = Malloc(16);
 
-	//Вывод визуализации
+	//Р’С‹РІРѕРґ РІРёР·СѓР°Р»РёР·Р°С†РёРё
 	visualize();
 	std::cout << std::endl;
 
-	//Перевыделение
+	//РџРµСЂРµРІС‹РґРµР»РµРЅРёРµ
 	ptr2 = Realloc(ptr2, 24);
 	
-	//Вывод визуализации
+	//Р’С‹РІРѕРґ РІРёР·СѓР°Р»РёР·Р°С†РёРё
 	visualize();
 	std::cout << std::endl;
 
-	//Освобождение
+	//РћСЃРІРѕР±РѕР¶РґРµРЅРёРµ
 	Free(ptr2);
 
-	//Вывод визуализации
+	//Р’С‹РІРѕРґ РІРёР·СѓР°Р»РёР·Р°С†РёРё
 	visualize();
 
 	free(memory);
@@ -63,109 +63,109 @@ int main(){
 
 void* Malloc(size_t size) {
 
-	//Приведение размера к числу, кратному размеру controlBlock
+	//РџСЂРёРІРµРґРµРЅРёРµ СЂР°Р·РјРµСЂР° Рє С‡РёСЃР»Сѓ, РєСЂР°С‚РЅРѕРјСѓ СЂР°Р·РјРµСЂСѓ controlBlock
 	if (size % sizeof(controlBlock))
 		size += sizeof(controlBlock) - size % sizeof(controlBlock);
 
-	//Запрашиваемый размер больше максимально доступного
+	//Р—Р°РїСЂР°С€РёРІР°РµРјС‹Р№ СЂР°Р·РјРµСЂ Р±РѕР»СЊС€Рµ РјР°РєСЃРёРјР°Р»СЊРЅРѕ РґРѕСЃС‚СѓРїРЅРѕРіРѕ
 	if (size > MEM_SIZE - sizeof(controlBlock))
 		return nullptr;
 
 	controlBlock* tmp;
-	tmp = (controlBlock*)memory;											//Начало памяти (первый controlBlock)
+	tmp = (controlBlock*)memory;											//РќР°С‡Р°Р»Рѕ РїР°РјСЏС‚Рё (РїРµСЂРІС‹Р№ controlBlock)
 
-	//Поиск первого подходящего блока
+	//РџРѕРёСЃРє РїРµСЂРІРѕРіРѕ РїРѕРґС…РѕРґСЏС‰РµРіРѕ Р±Р»РѕРєР°
 	while (tmp->size < size || tmp->used == true){
 
-		tmp += tmp->size + sizeof(controlBlock);							//Следующий блок
-		if (tmp - memory >= MEM_SIZE)										//Подходящий блок не найден
+		tmp += tmp->size + sizeof(controlBlock);							//РЎР»РµРґСѓСЋС‰РёР№ Р±Р»РѕРє
+		if (tmp - memory >= MEM_SIZE)										//РџРѕРґС…РѕРґСЏС‰РёР№ Р±Р»РѕРє РЅРµ РЅР°Р№РґРµРЅ
 			return nullptr;
 	}
 
-	//Блок подходит по размеру
+	//Р‘Р»РѕРє РїРѕРґС…РѕРґРёС‚ РїРѕ СЂР°Р·РјРµСЂСѓ
 	if (tmp->size == size) {
-		tmp->used = true;													//Пометить блок как занятый
-		return tmp + sizeof(controlBlock);									//Вернуть указатель на начало блока памяти
+		tmp->used = true;													//РџРѕРјРµС‚РёС‚СЊ Р±Р»РѕРє РєР°Рє Р·Р°РЅСЏС‚С‹Р№
+		return tmp + sizeof(controlBlock);									//Р’РµСЂРЅСѓС‚СЊ СѓРєР°Р·Р°С‚РµР»СЊ РЅР° РЅР°С‡Р°Р»Рѕ Р±Р»РѕРєР° РїР°РјСЏС‚Рё
 	}
-	//Блок нужно разделить
+	//Р‘Р»РѕРє РЅСѓР¶РЅРѕ СЂР°Р·РґРµР»РёС‚СЊ
 	else {
 		
-		controlBlock newBlock(tmp->size - size - sizeof(controlBlock));		//controlBlock нового блока памяти
-		tmp->size = size;													//Блок необходимого размера
-		tmp->used = true;													//Пометить блок как занятый
+		controlBlock newBlock(tmp->size - size - sizeof(controlBlock));		//controlBlock РЅРѕРІРѕРіРѕ Р±Р»РѕРєР° РїР°РјСЏС‚Рё
+		tmp->size = size;													//Р‘Р»РѕРє РЅРµРѕР±С…РѕРґРёРјРѕРіРѕ СЂР°Р·РјРµСЂР°
+		tmp->used = true;													//РџРѕРјРµС‚РёС‚СЊ Р±Р»РѕРє РєР°Рє Р·Р°РЅСЏС‚С‹Р№
 
-		if(tmp + sizeof(controlBlock) + tmp->size - memory < MEM_SIZE)		//Новый controlBlock не выходит за пределы памяти
+		if(tmp + sizeof(controlBlock) + tmp->size - memory < MEM_SIZE)		//РќРѕРІС‹Р№ controlBlock РЅРµ РІС‹С…РѕРґРёС‚ Р·Р° РїСЂРµРґРµР»С‹ РїР°РјСЏС‚Рё
 			*(tmp + sizeof(controlBlock) + tmp->size) = newBlock;
 
-		return tmp + sizeof(controlBlock);									//Вернуть указатель на начало блока памяти
+		return tmp + sizeof(controlBlock);									//Р’РµСЂРЅСѓС‚СЊ СѓРєР°Р·Р°С‚РµР»СЊ РЅР° РЅР°С‡Р°Р»Рѕ Р±Р»РѕРєР° РїР°РјСЏС‚Рё
 	}
 }
 
 void* Realloc(void* ptr, size_t size) {
 
-	//Приведение размера к числу, кратному размеру controlBlock
+	//РџСЂРёРІРµРґРµРЅРёРµ СЂР°Р·РјРµСЂР° Рє С‡РёСЃР»Сѓ, РєСЂР°С‚РЅРѕРјСѓ СЂР°Р·РјРµСЂСѓ controlBlock
 	if (size % sizeof(controlBlock))
 		size += sizeof(controlBlock) - size % sizeof(controlBlock);
 
-	//Запрашиваемый размер больше максимально доступного
+	//Р—Р°РїСЂР°С€РёРІР°РµРјС‹Р№ СЂР°Р·РјРµСЂ Р±РѕР»СЊС€Рµ РјР°РєСЃРёРјР°Р»СЊРЅРѕ РґРѕСЃС‚СѓРїРЅРѕРіРѕ
 	if (size > MEM_SIZE - sizeof(controlBlock))
 		return nullptr;
 
-	controlBlock* old = (controlBlock*)ptr - sizeof(controlBlock);			//controlBlock старого участка памяти
+	controlBlock* old = (controlBlock*)ptr - sizeof(controlBlock);			//controlBlock СЃС‚Р°СЂРѕРіРѕ СѓС‡Р°СЃС‚РєР° РїР°РјСЏС‚Рё
 
-	if (old->size == size)													//Запрашиваемый размер равен старому размеру
+	if (old->size == size)													//Р—Р°РїСЂР°С€РёРІР°РµРјС‹Р№ СЂР°Р·РјРµСЂ СЂР°РІРµРЅ СЃС‚Р°СЂРѕРјСѓ СЂР°Р·РјРµСЂСѓ
 		return ptr;
 
 	controlBlock* tmp;
-	tmp = (controlBlock*)memory;											//Начало памяти (первый controlBlock)
+	tmp = (controlBlock*)memory;											//РќР°С‡Р°Р»Рѕ РїР°РјСЏС‚Рё (РїРµСЂРІС‹Р№ controlBlock)
 
-	//Поиск первого подходящего блока
+	//РџРѕРёСЃРє РїРµСЂРІРѕРіРѕ РїРѕРґС…РѕРґСЏС‰РµРіРѕ Р±Р»РѕРєР°
 	while (tmp->size < size || tmp->used == true) {
 
-		tmp += tmp->size + sizeof(controlBlock);							//Следующий блок
-		if (tmp - memory >= MEM_SIZE)										//Подходящий блок не найден
+		tmp += tmp->size + sizeof(controlBlock);							//РЎР»РµРґСѓСЋС‰РёР№ Р±Р»РѕРє
+		if (tmp - memory >= MEM_SIZE)										//РџРѕРґС…РѕРґСЏС‰РёР№ Р±Р»РѕРє РЅРµ РЅР°Р№РґРµРЅ
 			return nullptr;
 	}
 
-	Free(ptr);																//Освобождение старой памяти
+	Free(ptr);																//РћСЃРІРѕР±РѕР¶РґРµРЅРёРµ СЃС‚Р°СЂРѕР№ РїР°РјСЏС‚Рё
 
-	//Блок подходит по размеру
+	//Р‘Р»РѕРє РїРѕРґС…РѕРґРёС‚ РїРѕ СЂР°Р·РјРµСЂСѓ
 	if (tmp->size == size) {
-		tmp->used = true;													//Пометить блок как занятый
-		memcpy(tmp + sizeof(controlBlock), ptr, old->size);					//Копирование данных
-		return tmp + sizeof(controlBlock);									//Вернуть указатель на начало блока памяти
+		tmp->used = true;													//РџРѕРјРµС‚РёС‚СЊ Р±Р»РѕРє РєР°Рє Р·Р°РЅСЏС‚С‹Р№
+		memcpy(tmp + sizeof(controlBlock), ptr, old->size);					//РљРѕРїРёСЂРѕРІР°РЅРёРµ РґР°РЅРЅС‹С…
+		return tmp + sizeof(controlBlock);									//Р’РµСЂРЅСѓС‚СЊ СѓРєР°Р·Р°С‚РµР»СЊ РЅР° РЅР°С‡Р°Р»Рѕ Р±Р»РѕРєР° РїР°РјСЏС‚Рё
 	}
-	//Блок нужно разделить
+	//Р‘Р»РѕРє РЅСѓР¶РЅРѕ СЂР°Р·РґРµР»РёС‚СЊ
 	else {
 
-		controlBlock newBlock(tmp->size - size - sizeof(controlBlock));		//controlBlock нового блока памяти
-		tmp->size = size;													//Блок необходимого размера
-		tmp->used = true;													//Пометить блок как занятый
-		memcpy(tmp + sizeof(controlBlock), ptr, old->size);					//Копирование данных
-		if (tmp + sizeof(controlBlock) + tmp->size - memory < MEM_SIZE)	//Новый controlBlock не выходит за пределы памяти
+		controlBlock newBlock(tmp->size - size - sizeof(controlBlock));		//controlBlock РЅРѕРІРѕРіРѕ Р±Р»РѕРєР° РїР°РјСЏС‚Рё
+		tmp->size = size;													//Р‘Р»РѕРє РЅРµРѕР±С…РѕРґРёРјРѕРіРѕ СЂР°Р·РјРµСЂР°
+		tmp->used = true;													//РџРѕРјРµС‚РёС‚СЊ Р±Р»РѕРє РєР°Рє Р·Р°РЅСЏС‚С‹Р№
+		memcpy(tmp + sizeof(controlBlock), ptr, old->size);					//РљРѕРїРёСЂРѕРІР°РЅРёРµ РґР°РЅРЅС‹С…
+		if (tmp + sizeof(controlBlock) + tmp->size - memory < MEM_SIZE)	//РќРѕРІС‹Р№ controlBlock РЅРµ РІС‹С…РѕРґРёС‚ Р·Р° РїСЂРµРґРµР»С‹ РїР°РјСЏС‚Рё
 			* (tmp + sizeof(controlBlock) + tmp->size) = newBlock;
 
-		return tmp + sizeof(controlBlock);									//Вернуть указатель на начало блока памяти
+		return tmp + sizeof(controlBlock);									//Р’РµСЂРЅСѓС‚СЊ СѓРєР°Р·Р°С‚РµР»СЊ РЅР° РЅР°С‡Р°Р»Рѕ Р±Р»РѕРєР° РїР°РјСЏС‚Рё
 	}	
 }
 
 void Free(void* ptr) {
 
 	if(ptr)
-		((controlBlock*)ptr - sizeof(controlBlock))->used = false;			//Пометить блок как свободный
+		((controlBlock*)ptr - sizeof(controlBlock))->used = false;			//РџРѕРјРµС‚РёС‚СЊ Р±Р»РѕРє РєР°Рє СЃРІРѕР±РѕРґРЅС‹Р№
 
 }
 
 void visualize() {
 
-	controlBlock* tmp = (controlBlock*)memory;								//Начало памяти (первый controlBlock)
-	char a;																	//Символ для вывода
+	controlBlock* tmp = (controlBlock*)memory;								//РќР°С‡Р°Р»Рѕ РїР°РјСЏС‚Рё (РїРµСЂРІС‹Р№ controlBlock)
+	char a;																	//РЎРёРјРІРѕР» РґР»СЏ РІС‹РІРѕРґР°
 
 	while (1) {
 	
-		if (tmp->used)														//Блок занят
+		if (tmp->used)														//Р‘Р»РѕРє Р·Р°РЅСЏС‚
 			a = '1';
-		else																//Блок свободен
+		else																//Р‘Р»РѕРє СЃРІРѕР±РѕРґРµРЅ
 			a = '0';
 
 		for (int i = 1; i > 0; i--) {										//controlBlock
@@ -174,14 +174,14 @@ void visualize() {
 
 		}
 
-		for (int i = tmp->size/sizeof(controlBlock); i > 0; i--) {			//Блок памяти
+		for (int i = tmp->size/sizeof(controlBlock); i > 0; i--) {			//Р‘Р»РѕРє РїР°РјСЏС‚Рё
 		
 			std::cout << a;
 		
 		}
 
-		tmp += sizeof(controlBlock) + tmp->size;							//Следующий controlBlock
-		if (tmp - memory >= MEM_SIZE)										//Конец памяти
+		tmp += sizeof(controlBlock) + tmp->size;							//РЎР»РµРґСѓСЋС‰РёР№ controlBlock
+		if (tmp - memory >= MEM_SIZE)										//РљРѕРЅРµС† РїР°РјСЏС‚Рё
 			return;
 	}
 }
