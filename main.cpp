@@ -94,8 +94,7 @@ void* Malloc(size_t size) {
 		tmp->size = size;													//Блок необходимого размера
 		tmp->used = true;													//Пометить блок как занятый
 
-		if(tmp + sizeof(controlBlock) + tmp->size - memory < MEM_SIZE)		//Новый controlBlock не выходит за пределы памяти
-			*(tmp + sizeof(controlBlock) + tmp->size) = newBlock;
+		*(tmp + sizeof(controlBlock) + tmp->size) = newBlock;
 
 		return tmp + sizeof(controlBlock);									//Вернуть указатель на начало блока памяти
 	}
@@ -142,8 +141,7 @@ void* Realloc(void* ptr, size_t size) {
 		tmp->size = size;													//Блок необходимого размера
 		tmp->used = true;													//Пометить блок как занятый
 		memcpy(tmp + sizeof(controlBlock), ptr, old->size);					//Копирование данных
-		if (tmp + sizeof(controlBlock) + tmp->size - memory < MEM_SIZE)	//Новый controlBlock не выходит за пределы памяти
-			* (tmp + sizeof(controlBlock) + tmp->size) = newBlock;
+		*(tmp + sizeof(controlBlock) + tmp->size) = newBlock;
 
 		return tmp + sizeof(controlBlock);									//Вернуть указатель на начало блока памяти
 	}	
